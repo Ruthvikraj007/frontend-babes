@@ -1,0 +1,732 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Common Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+        }
+        
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .notification-bell:hover {
+            background-color: #333;
+        }
+        
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff3b30;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        /* Contacts Page Styles */
+        .search-container {
+            padding: 15px 20px;
+            background-color: #1a1a1a;
+            border-bottom: 1px solid #333;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 25px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #007aff;
+        }
+        
+        .search-box::placeholder {
+            color: #888;
+        }
+        
+        .contacts-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2a2a;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .contact-item:hover {
+            background-color: #1a1a1a;
+        }
+        
+        .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .contact-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .contact-name {
+            font-weight: 500;
+            font-size: 16px;
+        }
+        
+        .contact-status {
+            font-size: 12px;
+            color: #4cd964;
+            margin-top: 2px;
+        }
+        
+        .contact-offline {
+            color: #888;
+        }
+        
+        .call-button {
+            background-color: #007aff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .call-button:hover {
+            background-color: #0056cc;
+        }
+        
+        .section-title {
+            padding: 15px 20px 5px 20px;
+            font-size: 14px;
+            color: #888;
+            font-weight: 500;
+        }
+        
+        /* Video Call Page Styles */
+        #videoCallPage {
+            display: none;
+        }
+        
+        .contact-info-small {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .contact-name-small {
+            font-weight: 500;
+        }
+        
+        .call-duration {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .call-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .end-call {
+            background-color: #ff3b30;
+        }
+        
+        .video-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .remote-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #2a2a2a;
+        }
+        
+        .local-video {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 160px;
+            border-radius: 10px;
+            border: 2px solid #333;
+            object-fit: cover;
+            background-color: #2a2a2a;
+        }
+        
+        .footer {
+            padding: 15px 20px;
+            background-color: #1a1a1a;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .footer-controls {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #333;
+        }
+        
+        .active {
+            background-color: #007aff;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 10px;
+            background-color: #000;
+            font-size: 12px;
+        }
+        
+        .network-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .signal-indicator {
+            width: 15px;
+            height: 10px;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .signal-bar {
+            width: 3px;
+            margin-right: 1px;
+            background-color: #4cd964;
+        }
+        
+        .bar-1 { height: 3px; }
+        .bar-2 { height: 5px; }
+        .bar-3 { height: 7px; }
+        .bar-4 { height: 9px; }
+        
+        /* Friend Requests Panel */
+        .requests-panel {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            width: 300px;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .requests-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .requests-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .close-requests {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .request-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        .request-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .request-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .request-name {
+            font-size: 14px;
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .accept-btn, .decline-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .accept-btn {
+            background-color: #007aff;
+            color: white;
+        }
+        
+        .decline-btn {
+            background-color: #333;
+            color: white;
+        }
+        
+        .no-requests {
+            text-align: center;
+            color: #888;
+            font-style: italic;
+            padding: 20px 0;
+        }
+        
+        /* Page Transitions */
+        #contactsPage {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        #videoCallPage {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contacts List Page -->
+    <div id="contactsPage">
+        <div class="status-bar">
+            <div>21:34</div>
+            <div class="network-status">
+                <div class="signal-indicator">
+                    <div class="signal-bar bar-1"></div>
+                    <div class="signal-bar bar-2"></div>
+                    <div class="signal-bar bar-3"></div>
+                    <div class="signal-bar bar-4"></div>
+                </div>
+                <div>Wi-Fi</div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <div class="app-title">Video Call</div>
+            <div class="header-controls">
+                <div class="notification-bell" onclick="toggleRequests()">
+                    🔔
+                    <div class="notification-count">3</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search contacts..." onkeyup="filterContacts()" id="searchInput">
+        </div>
+        
+        <div class="contacts-container" id="contactsContainer">
+            <div class="section-title">ONLINE NOW</div>
+            <div class="contact-item" onclick="startVideoCall('yoyo')">
+                <div class="contact-info">
+                    <div class="contact-avatar">Y</div>
+                    <div class="contact-details">
+                        <div class="contact-name">yoyo</div>
+                        <div class="contact-status">Active now</div>
+                    </div>
+                </div>
+                <button class="call-button">Video Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('VASANTH')">
+                <div class="contact-info">
+                    <div class="contact-avatar">V</div>
+                    <div class="contact-details">
+                        <div class="contact-name">V A S A N T H</div>
+                        <div class="contact-status">Active 2m ago</div>
+                    </div>
+                </div>
+                <button class="call-button">Video Call</button>
+            </div>
+            
+            <div class="section-title">RECENT CONTACTS</div>
+            <div class="contact-item" onclick="startVideoCall('Sarmi')">
+                <div class="contact-info">
+                    <div class="contact-avatar">S</div>
+                    <div class="contact-details">
+                        <div class="contact-name">Sarmi😊</div>
+                        <div class="contact-status contact-offline">Active 1w ago</div>
+                    </div>
+                </div>
+                <button class="call-button">Video Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('Vivek')">
+                <div class="contact-info">
+                    <div class="contact-avatar">V</div>
+                    <div class="contact-details">
+                        <div class="contact-name">Vivek_kapri</div>
+                        <div class="contact-status contact-offline">Active 1w ago</div>
+                    </div>
+                </div>
+                <button class="call-button">Video Call</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Call Page -->
+    <div id="videoCallPage">
+        <div class="status-bar">
+            <div>21:34</div>
+            <div class="network-status">
+                <div class="signal-indicator">
+                    <div class="signal-bar bar-1"></div>
+                    <div class="signal-bar bar-2"></div>
+                    <div class="signal-bar bar-3"></div>
+                    <div class="signal-bar bar-4"></div>
+                </div>
+                <div>Wi-Fi</div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <button class="back-button" onclick="backToContacts()">←</button>
+            <div class="contact-info-small">
+                <div class="avatar-small" id="callAvatar">Y</div>
+                <div>
+                    <div class="contact-name-small" id="callContactName">yoyo</div>
+                    <div class="call-duration">00:05:23</div>
+                </div>
+            </div>
+            <div class="call-controls">
+                <div class="notification-bell" onclick="toggleRequests()">
+                    🔔
+                    <div class="notification-count">3</div>
+                </div>
+                <button class="control-btn">🔊</button>
+                <button class="control-btn end-call" onclick="endCall()">📞</button>
+            </div>
+        </div>
+        
+        <div class="video-container">
+            <video class="remote-video" autoplay muted></video>
+            <video class="local-video" autoplay muted></video>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-controls">
+                <button class="footer-btn">🎤</button>
+                <button class="footer-btn">📹</button>
+                <button class="footer-btn">🔄</button>
+                <button class="footer-btn">💬</button>
+                <button class="footer-btn">⋯</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Friend Requests Panel -->
+    <div class="requests-panel" id="requestsPanel">
+        <div class="requests-header">
+            <div class="requests-title">Friend Requests</div>
+            <button class="close-requests" onclick="closeRequests()">✕</button>
+        </div>
+        <div class="requests-list">
+            <div class="request-item">
+                <div class="request-user">
+                    <div class="request-avatar">S</div>
+                    <div class="request-name">Shashank</div>
+                </div>
+                <div class="request-actions">
+                    <button class="accept-btn" onclick="acceptRequest(this)">Accept</button>
+                    <button class="decline-btn" onclick="declineRequest(this)">Decline</button>
+                </div>
+            </div>
+            <div class="request-item">
+                <div class="request-user">
+                    <div class="request-avatar">V</div>
+                    <div class="request-name">Vivek_kapri</div>
+                </div>
+                <div class="request-actions">
+                    <button class="accept-btn" onclick="acceptRequest(this)">Accept</button>
+                    <button class="decline-btn" onclick="declineRequest(this)">Decline</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentCallSeconds = 0;
+        let callInterval;
+        let currentContact = '';
+
+        // Start video call function
+        function startVideoCall(contactName) {
+            currentContact = contactName;
+            
+            // Update the call interface with contact info
+            document.getElementById('callContactName').textContent = contactName;
+            document.getElementById('callAvatar').textContent = contactName.charAt(0).toUpperCase();
+            
+            // Switch to video call page
+            document.getElementById('contactsPage').style.display = 'none';
+            document.getElementById('videoCallPage').style.display = 'flex';
+            
+            // Start call timer
+            currentCallSeconds = 0;
+            updateCallTimer();
+            callInterval = setInterval(updateCallTimer, 1000);
+            
+            // Simulate call connection
+            setTimeout(() => {
+                alert(\Video call connected with \\);
+            }, 1000);
+        }
+
+        // Update call timer
+        function updateCallTimer() {
+            currentCallSeconds++;
+            const minutes = Math.floor(currentCallSeconds / 60);
+            const seconds = currentCallSeconds % 60;
+            document.querySelector('.call-duration').textContent = 
+                \\:\\;
+        }
+
+        // Back to contacts list
+        function backToContacts() {
+            clearInterval(callInterval);
+            document.getElementById('videoCallPage').style.display = 'none';
+            document.getElementById('contactsPage').style.display = 'flex';
+        }
+
+        // End call
+        function endCall() {
+            if(confirm('End this call?')) {
+                clearInterval(callInterval);
+                document.getElementById('videoCallPage').style.display = 'none';
+                document.getElementById('contactsPage').style.display = 'flex';
+                alert(\Call with \ ended\);
+            }
+        }
+
+        // Friend requests functionality
+        function toggleRequests() {
+            const panel = document.getElementById('requestsPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function closeRequests() {
+            document.getElementById('requestsPanel').style.display = 'none';
+        }
+
+        function acceptRequest(button) {
+            const requestItem = button.closest('.request-item');
+            const userName = requestItem.querySelector('.request-name').textContent;
+            requestItem.remove();
+            updateNotificationCount();
+            alert(\Friend request from \ accepted!\);
+        }
+
+        function declineRequest(button) {
+            const requestItem = button.closest('.request-item');
+            const userName = requestItem.querySelector('.request-name').textContent;
+            requestItem.remove();
+            updateNotificationCount();
+            alert(\Friend request from \ declined.\);
+        }
+
+        function updateNotificationCount() {
+            const requestItems = document.querySelectorAll('.request-item');
+            const notificationCounts = document.querySelectorAll('.notification-count');
+            
+            notificationCounts.forEach(count => {
+                if (requestItems.length === 0) {
+                    count.style.display = 'none';
+                } else {
+                    count.textContent = requestItems.length;
+                    count.style.display = 'flex';
+                }
+            });
+        }
+
+        // Search contacts functionality
+        function filterContacts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const contactItems = document.querySelectorAll('.contact-item');
+            
+            contactItems.forEach(item => {
+                const contactName = item.querySelector('.contact-name').textContent.toLowerCase();
+                if (contactName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Close requests panel when clicking outside
+        document.addEventListener('click', function(event) {
+            const panel = document.getElementById('requestsPanel');
+            const bells = document.querySelectorAll('.notification-bell');
+            let isBell = false;
+            
+            bells.forEach(bell => {
+                if (bell.contains(event.target)) {
+                    isBell = true;
+                }
+            });
+            
+            if (panel.style.display === 'block' && !panel.contains(event.target) && !isBell) {
+                panel.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

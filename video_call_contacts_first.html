@@ -1,0 +1,425 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background-color: #2a2a2a;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        
+        .header-info {
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .search-box {
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+        
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .contact-item:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007acc, #00a8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        
+        .contact-details {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .contact-status {
+            font-size: 12px;
+            color: #00ff88;
+        }
+        
+        .contact-offline {
+            color: #888;
+        }
+        
+        .call-btn {
+            background: linear-gradient(135deg, #007acc, #00a8ff);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .call-btn:hover {
+            background: linear-gradient(135deg, #005a99, #007acc);
+            transform: translateY(-1px);
+        }
+        
+        .section-title {
+            padding: 15px 20px 5px 20px;
+            font-size: 14px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Video Call Screen (Hidden by default) */
+        .video-call-screen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .call-header {
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+            border-bottom: 1px solid #333;
+        }
+        
+        .room-info {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .room-name {
+            font-size: 16px;
+            color: #cccccc;
+        }
+        
+        .calling-info {
+            font-size: 14px;
+            color: #00ff88;
+        }
+        
+        .speech-mode {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #ffffff;
+        }
+        
+        .call-timer {
+            text-align: center;
+            font-size: 14px;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+        
+        .video-feeds {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .video-feed {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #333;
+        }
+        
+        .feed-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        
+        .feed-status {
+            font-size: 14px;
+            color: #00ff88;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .connecting {
+            color: #ffaa00;
+        }
+        
+        .call-controls {
+            padding: 20px;
+            text-align: center;
+            background-color: #2a2a2a;
+            border-top: 1px solid #333;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, #ff5252, #ff6b6b);
+            transform: translateY(-1px);
+        }
+        
+        .captions {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .notification-bell {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contacts List Screen -->
+    <div class="container" id="contactsScreen">
+        <div class="header">
+            <h1>Video Call</h1>
+            <div class="header-info">Select a contact to start video call</div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search contacts..." onkeyup="filterContacts()" id="searchInput">
+        </div>
+        
+        <div class="contacts-list" id="contactsList">
+            <div class="section-title">Online Friends</div>
+            <div class="contact-item" onclick="startVideoCall('Friend', 'test-room')">
+                <div class="contact-avatar">F</div>
+                <div class="contact-details">
+                    <div class="contact-name">Friend</div>
+                    <div class="contact-status">Online - Ready to call</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('yoyo', 'chat-room')">
+                <div class="contact-avatar">Y</div>
+                <div class="contact-details">
+                    <div class="contact-name">yoyo</div>
+                    <div class="contact-status">Active now</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="section-title">Recent Contacts</div>
+            <div class="contact-item" onclick="startVideoCall('VASANTH', 'vas-room')">
+                <div class="contact-avatar">V</div>
+                <div class="contact-details">
+                    <div class="contact-name">V A S A N T H</div>
+                    <div class="contact-status contact-offline">Last seen 2h ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('Sarmi', 'sarmi-room')">
+                <div class="contact-avatar">S</div>
+                <div class="contact-details">
+                    <div class="contact-name">Sarmi😊</div>
+                    <div class="contact-status contact-offline">Last seen 1d ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+        </div>
+        
+        <div class="notification-bell" onclick="toggleNotifications()">
+            🔔
+        </div>
+    </div>
+
+    <!-- Video Call Screen -->
+    <div class="video-call-screen" id="videoCallScreen">
+        <div class="call-header">
+            <div class="room-info">
+                <div class="room-name" id="roomName">Room: test-room</div>
+                <div class="calling-info" id="callingInfo">Calling: Friend</div>
+            </div>
+            <div class="speech-mode">Speech Mode</div>
+            <div class="call-timer" id="callTimer">00:05</div>
+        </div>
+        
+        <div class="video-feeds">
+            <div class="video-feed">
+                <div class="feed-title">You | Video Live</div>
+                <div class="feed-status">Video feed active</div>
+            </div>
+            
+            <div class="video-feed">
+                <div class="feed-title" id="remoteUserName">Friend | Connecting...</div>
+                <div class="feed-status connecting" id="remoteStatus">Waiting for Friend to join...</div>
+                <div class="feed-status connecting">Ringing...</div>
+            </div>
+        </div>
+        
+        <div class="call-controls">
+            <button class="back-btn" onclick="backToContacts()">Back to Dashboard</button>
+            <div class="captions">Captions OFF</div>
+        </div>
+    </div>
+
+    <script>
+        let callTimerInterval;
+        let callSeconds = 5;
+        let currentContact = '';
+        let currentRoom = '';
+
+        function startVideoCall(contactName, roomName) {
+            currentContact = contactName;
+            currentRoom = roomName;
+            
+            // Update the call screen with contact info
+            document.getElementById('roomName').textContent = 'Room: ' + roomName;
+            document.getElementById('callingInfo').textContent = 'Calling: ' + contactName;
+            document.getElementById('remoteUserName').textContent = contactName + ' | Connecting...';
+            document.getElementById('remoteStatus').textContent = 'Waiting for ' + contactName + ' to join...';
+            
+            // Switch to video call screen
+            document.getElementById('contactsScreen').style.display = 'none';
+            document.getElementById('videoCallScreen').style.display = 'flex';
+            
+            // Start call timer
+            callSeconds = 5;
+            updateCallTimer();
+            callTimerInterval = setInterval(updateCallTimer, 1000);
+            
+            // Simulate call progress
+            setTimeout(() => {
+                document.getElementById('remoteStatus').textContent = contactName + ' is joining...';
+            }, 2000);
+            
+            setTimeout(() => {
+                document.getElementById('remoteUserName').textContent = contactName + ' | Video Live';
+                document.getElementById('remoteStatus').textContent = 'Connected';
+                document.getElementById('remoteStatus').className = 'feed-status';
+            }, 4000);
+        }
+
+        function updateCallTimer() {
+            callSeconds++;
+            const minutes = Math.floor(callSeconds / 60);
+            const seconds = callSeconds % 60;
+            document.getElementById('callTimer').textContent = 
+                minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+        }
+
+        function backToContacts() {
+            clearInterval(callTimerInterval);
+            document.getElementById('videoCallScreen').style.display = 'none';
+            document.getElementById('contactsScreen').style.display = 'block';
+        }
+
+        function filterContacts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const contactItems = document.querySelectorAll('.contact-item');
+            
+            contactItems.forEach(item => {
+                const contactName = item.querySelector('.contact-name').textContent.toLowerCase();
+                if (contactName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleNotifications() {
+            alert('Friend requests feature would open here');
+        }
+
+        // Initialize - show contacts screen first
+        document.getElementById('contactsScreen').style.display = 'block';
+        document.getElementById('videoCallScreen').style.display = 'none';
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+﻿                  <button
+                    style={dropdownItemStyle}
+                    onMouseOver={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+                    onMouseOut={(e) => e.target.style.background = 'transparent'}
+                    onClick={() => {
+                      setShowProfileDropdown(false);
+                      navigate('/profile/edit');
+                    }}
+                  >
+                    <FaUser size={16} />
+                    <span>Edit Profile</span>
+                  </button>

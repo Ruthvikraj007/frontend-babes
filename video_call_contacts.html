@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Contact - Video Call</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background-color: #2a2a2a;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        
+        .header-info {
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .search-box {
+            padding: 15px 20px;
+            background-color: #2a2a2a;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+        
+        .contacts-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .contact-item:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007acc, #00a8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+        
+        .contact-details {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .contact-status {
+            font-size: 12px;
+            color: #00ff88;
+        }
+        
+        .contact-offline {
+            color: #888;
+        }
+        
+        .call-btn {
+            background: linear-gradient(135deg, #007acc, #00a8ff);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .call-btn:hover {
+            background: linear-gradient(135deg, #005a99, #007acc);
+            transform: translateY(-1px);
+        }
+        
+        .section-title {
+            padding: 15px 20px 5px 20px;
+            font-size: 14px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 15px 20px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, #ff5252, #ff6b6b);
+            transform: translateY(-1px);
+        }
+        
+        .notification-bell {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Video Call</h1>
+            <div class="header-info">Select a contact to start video call</div>
+        </div>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search contacts..." onkeyup="filterContacts()" id="searchInput">
+        </div>
+        
+        <div class="contacts-list" id="contactsList">
+            <div class="section-title">Online Friends</div>
+            
+            <div class="contact-item" onclick="startVideoCall('Friend')">
+                <div class="contact-avatar">F</div>
+                <div class="contact-details">
+                    <div class="contact-name">Friend</div>
+                    <div class="contact-status">Online - Ready to call</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('yoyo')">
+                <div class="contact-avatar">Y</div>
+                <div class="contact-details">
+                    <div class="contact-name">yoyo</div>
+                    <div class="contact-status">Active now</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('VASANTH')">
+                <div class="contact-avatar">V</div>
+                <div class="contact-details">
+                    <div class="contact-name">V A S A N T H</div>
+                    <div class="contact-status">Active 2h ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="section-title">Recent Contacts</div>
+            
+            <div class="contact-item" onclick="startVideoCall('Sarmi')">
+                <div class="contact-avatar">S</div>
+                <div class="contact-details">
+                    <div class="contact-name">Sarmi😊</div>
+                    <div class="contact-status contact-offline">Last seen 1d ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('Vivek_kapri')">
+                <div class="contact-avatar">V</div>
+                <div class="contact-details">
+                    <div class="contact-name">Vivek_kapri</div>
+                    <div class="contact-status contact-offline">Last seen 3d ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('Jeevan S Hegde')">
+                <div class="contact-avatar">J</div>
+                <div class="contact-details">
+                    <div class="contact-name">Jeevan S Hegde</div>
+                    <div class="contact-status contact-offline">Last seen 1w ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+            
+            <div class="contact-item" onclick="startVideoCall('Scamboy_op')">
+                <div class="contact-avatar">S</div>
+                <div class="contact-details">
+                    <div class="contact-name">scamboy_op</div>
+                    <div class="contact-status contact-offline">Last seen 2w ago</div>
+                </div>
+                <button class="call-btn">Call</button>
+            </div>
+        </div>
+        
+        <button class="back-btn" onclick="goBackToDashboard()">Back to Dashboard</button>
+        
+        <div class="notification-bell" onclick="toggleNotifications()">
+            🔔
+        </div>
+    </div>
+
+    <script>
+        function startVideoCall(contactName) {
+            // This would redirect to your actual video call interface with the selected contact
+            // For now, we'll just show an alert
+            alert('Starting video call with ' + contactName + '...');
+            // In your actual implementation, this would be:
+            // window.location.href = 'video_call.html?contact=' + contactName;
+        }
+
+        function goBackToDashboard() {
+            // This would go back to your main dashboard
+            alert('Returning to dashboard...');
+            // In your actual implementation, this would be:
+            // window.location.href = 'dashboard.html';
+        }
+
+        function filterContacts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const contactItems = document.querySelectorAll('.contact-item');
+            
+            contactItems.forEach(item => {
+                const contactName = item.querySelector('.contact-name').textContent.toLowerCase();
+                if (contactName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleNotifications() {
+            alert('Friend requests feature would open here');
+        }
+    </script>
+</body>
+</html>
